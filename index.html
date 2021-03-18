@@ -1,270 +1,425 @@
+<!doctype html>
+<html lang="en-us">
+  <!-- Adapted for RenPyWeb from https://github.com/emscripten-core/emscripten/blob/master/src/shell.html -->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ren'Py Tutorial Game</title>
+    <script>
+      var DEFAULT_GAME_FILENAME = 'game.zip';
+    </script>
+    <style>
+      body {
+        font-family: arial;
+        margin: 0;
+        padding: none;
+      }
+
+      .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+      div.emscripten { text-align: center; }
+      div.emscripten_border { border: 1px solid black; }
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      canvas.emscripten { border: 0px none; background-color: black; width: 100vw; height: 100vh; }
+
+      #emscripten_logo {
+        display: inline-block;
+        margin: 0;
+      }
+
+      .spinner {
+        height: 30px;
+        width: 30px;
+        vertical-align: top;
+        position: absolute;
+
+        -webkit-animation: rotation .8s linear infinite;
+        -moz-animation: rotation .8s linear infinite;
+        -o-animation: rotation .8s linear infinite;
+        animation: rotation 0.8s linear infinite;
+
+        border-left: 5px solid rgb(235, 235, 235);
+        border-right: 5px solid rgb(235, 235, 235);
+        border-bottom: 5px solid rgb(235, 235, 235);
+        border-top: 5px solid rgb(120, 120, 120);
+
+        border-radius: 100%;
+        background-color: rgb(189, 215, 46);
+      }
+
+      @-webkit-keyframes rotation {
+        from {-webkit-transform: rotate(0deg);}
+        to {-webkit-transform: rotate(360deg);}
+      }
+      @-moz-keyframes rotation {
+        from {-moz-transform: rotate(0deg);}
+        to {-moz-transform: rotate(360deg);}
+      }
+      @-o-keyframes rotation {
+        from {-o-transform: rotate(0deg);}
+        to {-o-transform: rotate(360deg);}
+      }
+      @keyframes rotation {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
+      }
+
+      #statusbar_container {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        margin: auto;
+      }
+
+      #statusbar {
+        width: 50%;
+        margin: auto;
+        min-width: 340px;
+        padding: 10px;
+        height: 40px;
+        background-color: rgb(40, 40, 40);
+      }
+
+      #status {
+        vertical-align: top;
+        font-weight: bold;
+        color: rgb(120, 120, 120);
+        width: 100%;
+        padding-bottom: 2px;
+        text-align: left;
+      }
+
+      #progress {
+        height: 20px;
+        width: 100%;
+      }
 
 
-<!DOCTYPE html>
-<html lang="es">
+      #ContextContainer {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        color: white;
+      }
+      #ContextButton {
+        text-decoration: none;
+        color: grey;
+        font-size: xx-large;
+        cursor: pointer;
+        user-select: none;
+        -moz-user-select: none;
+      }
+      #ContextButton:focus {
+        outline: none;
+      }
+      #ContextMenu a {
+        text-decoration: none;
+        color: lightgrey;
+      }
+      #ContextMenu a:hover {
+        text-decoration: nsone;
+        color: grey;
+      }
+      #ContextMenu {
+        background-color: rgb(40,40,40);
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
 
-<head>
-
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="generator" content="HelpNDoc Personal Edition 7.1.3.270">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="favicon.ico"/>
-
-  <title>Primeros pasos</title>
-  <meta name="description" content="" /> 
-  <meta name="keywords" content="">
-
-
-
-  
-
-  <!-- Twitter Card data -->
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Primeros pasos">
-  <meta name="twitter:description" content="">
-
-  <!-- Open Graph data -->
-  <meta property="og:title" content="Primeros pasos" />
-  <meta property="og:type" content="article" />
-  <meta property="og:description" content="" />
-  <meta property="og:site_name" content="Gestor de personajes La llamada de Cthulhu" /> 
-
-  <!-- Bootstrap core CSS -->
-  <link href="vendors/bootstrap-3.4.1/css/bootstrap.min.css" rel="stylesheet"/>
-
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <link href="vendors/bootstrap-3.4.1/css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
-
-  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-      <script src="vendors/html5shiv-3.7.3/html5shiv.min.js"></script>
-      <script src="vendors/respond-1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-  <!-- JsTree styles -->
-  <link href="vendors/jstree-3.3.10/themes/default/style.min.css" rel="stylesheet"/>
-
-  <!-- Hnd styles -->
-  <link href="css/layout.min.css" rel="stylesheet" />
-  <link href="css/effects.min.css" rel="stylesheet" />
-  <link href="css/theme-light-blue.min.css" rel="stylesheet" />
-  <link href="css/print.min.css" rel="stylesheet" media="print" />
-  <style type="text/css">nav { width: 350px} @media screen and (min-width:769px) { body.md-nav-expanded div#main { margin-left: 350px} body.md-nav-expanded header { padding-left: 364px} }</style>
-
-  <!-- Content style -->
-  <link href="css/hnd.content.css" rel="stylesheet" />
-
-  
-
-
-
-</head>
-
-<body class="md-nav-expanded">
-
-
-
-  <div id="skip-link">
-    <a href="#main-content" class="element-invisible">Skip to main content</a>
-  </div>
-
-  <header class="headroom">
-    <button class="hnd-toggle btn btn-default">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>        
-    </button>
-    <h1>Gestor de personajes La llamada de Cthulhu</h1>
-    
-  </header>
-
-  <nav id="panel-left" class="md-nav-expanded">
-    <!-- Nav tabs -->
-    <ul class="tab-tabs nav nav-tabs" role="tablist">
-      <li id="nav-close"> 
-        <button class="hnd-toggle btn btn-default">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-        </button>
-      </li>
-      
-	  
-        <li role="presentation" class="tab active">
-            <a href="#contents" id="tab-contents" aria-controls="contents" role="tab" data-toggle="tab">
-                <i class="glyphicon glyphicon-list"></i>
-                Contents
-            </a>
-        </li>
-      
-        <li role="presentation" class="tab">
-            <a href="#index" id="tab-index" aria-controls="index" role="tab" data-toggle="tab">
-                <i class="glyphicon glyphicon-asterisk"></i>
-                Index
-            </a>
-        </li>
-      
-        <li role="presentation" class="tab">
-            <a href="#search" id="tab-search" aria-controls="search" role="tab" data-toggle="tab">
-                <i class="glyphicon glyphicon-search"></i>
-                Search
-            </a>
-        </li>
-      
-    </ul>  <!-- /Nav tabs -->
-
-    <!-- Tab panes -->
-    <div class="tab-content">
-	  
-      <div role="tabpanel" class="tab-pane active" id="contents">
-        <div id="toc" class="tree-container unselectable"
-            data-url="_toc.json"
-            data-openlvl="1"
-        >
-            
-        </div>
-      </div>  <!-- /contents-->
-      
-      <div role="tabpanel" class="tab-pane" id="index">
-        <div id="keywords" class="tree-container unselectable"
-            data-url="_keywords.json"
-            data-openlvl="1"
-        >
-            
-        </div>
-      </div>  <!-- /index-->
-      
-      <div role="tabpanel" class="tab-pane" id="search">
-        <div class="search-content">
-          <div class="search-input">
-            <form id="search-form">
-              <div class="form-group">
-                <div class="input-group">
-                  <input type="text" class="form-control" id="input-search" name="input-search" placeholder="Search..." />
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">
-                      <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                    </button>
-                  </span>
-                </div>
-              </div>
-            </form>
-          </div>  <!-- /search-input -->
-          <div class="search-result">
-            <div id="search-info"></div>
-            <div class="tree-container unselectable" id="search-tree"></div>
-          </div>  <!-- /search-result -->
-        </div>  <!-- /search-content -->
-      </div>  <!-- /search-->
-      
-    </div>  <!-- /Tab panes -->
-
-  </nav>
-
-  <div id="main">
-
-    <article>
-        <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Primerospasos"
-		  data-hnd-context="3"
-		  data-hnd-title="Primeros pasos"
-		>
-            
-                <div class="navigation">
-                    <ol class="breadcrumb">
-                        
-                    </ol>
-                    <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Introduccion.html" title="Introducci&oacute;n" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Requisitosdelsistema.html" title="Requisitos del sistema" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
-                    </div>
-                </div> 
-            
-
-            <a id="main-content"></a>
-
-            <h2>Primeros pasos</h2>
-
-            <div class="main-content">
-                
-<p></p>
-<h1 class="rvps5"><span class="rvts0"><a class="rvts17" href="Introduccion.html">INTRODUCCION</a></span></h1>
-<h1 class="rvps5"><span class="rvts0"><a class="rvts17" href="index.html">PRIMEROS PASOS:</a></span></h1>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts13"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><a class="rvts16" href="Requisitosdelsistema.html">REQUESITOS DE SISTEMA</a></span></h2>
-<h2 class="rvps6"><span class="rvts0"><span class="rvts13"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><a class="rvts16" href="FuncionamientodelaAplicacion.html">FUNCIONES DE LA APLICACION:</a></span></h2>
-<h3 class="rvps7"><span class="rvts0"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><a class="rvts15" href="Crearpersonaje.html">CREAR PERSONAJE</a></span></h3>
-<h3 class="rvps7"><span class="rvts0"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><a class="rvts15" href="Verlasfichasdepersonaje.html">VER FICHA DE PERSONAJE</a></span></h3>
-<h3 class="rvps7"><span class="rvts0"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><a class="rvts15" href="Editarlospersonajes.html">EDITAR LOS PERSONAJES</a></span></h3>
-<h3 class="rvps7"><span class="rvts0"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></span><span class="rvts0"><a class="rvts15" href="Gestionpersonajes.html">GESTION DE LOS PERSONAJES</a></span></h3>
-<p></p>
-<p class="rvps4" style="clear: both;"><span class="rvts11">Creado con el Personal Edition de HelpNDoc: </span><a class="rvts12" href="https://www.helpndoc.com/es/descubrir-funciones/">Crear fácilmente páginas web de ayuda</a></p>
-
-            </div>
-            
-            <div id="topic_footer"><div id="topic_footer_content">Copyright &copy; &lt;Dates&gt; by &lt;Authors&gt;. All Rights Reserved.</div></div>
-        </div>  <!-- /#topic-content -->
-    </article>
-
-    <footer></footer>
-
-  </div>  <!-- /#main -->
-
-  <div class="mask" data-toggle="sm-nav-expanded"></div>
-  
-  <!-- Modal -->
-  <div class="modal fade" id="hndModal" tabindex="-1" role="dialog" aria-labelledby="hndModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="hndModalLabel"></h4>
-        </div>
-        <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary modal-btn-close" data-dismiss="modal">Close</button>
+    <div id="statusbar_container">
+      <div id="statusbar">
+        <div class="spinner" id='spinner'></div>
+        <div style="margin-left: 50px;">
+          <div class="emscripten" id="status">Downloading...</div>
+          <progress value="0" max="100" id="progress" hidden=1></progress>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Splitter -->
-  <div id="hnd-splitter" style="left: 350px"></div>  
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
 
-  <!-- Scripts -->
-  <script src="vendors/jquery-3.5.1/jquery.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/bootstrap.min.js"></script>
-  <script src="vendors/bootstrap-3.4.1/js/ie10-viewport-bug-workaround.js"></script>
-  <script src="vendors/markjs-8.11.1/jquery.mark.min.js"></script>
-  <script src="vendors/uri-1.19.2/uri.min.js"></script>
-  <script src="vendors/imageMapResizer-1.0.10/imageMapResizer.min.js"></script>
-  <script src="vendors/headroom-0.11.0/headroom.min.js"></script>
-  <script src="vendors/jstree-3.3.10/jstree.min.js"></script>  
-  <script src="vendors/interactjs-1.9.22/interact.min.js"></script>  
+    <script>
+      // Subtly hint at lack of WebAssembly support (if applicable)
+      if (typeof WebAssembly !== 'object') {
+          var error_message = "Unsupported browser - please upgrade!\n(WebAssembly support needed)";
+          document.body = document.createElement('body');
+          document.body.innerHTML = error_message.replace('\n', '<br />');
+          location.href = 'javascript:alert("' + error_message.replace('\n', '\\n') + '")';
+          throw error_message;
+          window.stop();
+          // R.I.P.
+      }
 
-  <!-- HelpNDoc scripts -->
-  <script src="js/polyfill.object.min.js"></script>
-  <script src="_translations.js"></script>
-  <script src="js/hndsd.min.js"></script>
-  <script src="js/hndse.min.js"></script>
-  <script src="js/app.min.js"></script>
+      // Work-around iframe focus
+      // https://github.com/emscripten-core/emscripten/pull/7631
+      document.getElementById('canvas').addEventListener('mouseenter', function(e) { window.focus() });
+      document.getElementById('canvas').addEventListener('click', function(e) { window.focus() });
+    </script>
 
-  <!-- Init script -->
-  <script>
-    $(function() {
-      // Create the app
-      var app = new Hnd.App();
-      // Update translations
-      hnd_ut(app);
-	  // Instanciate imageMapResizer
-	  imageMapResize();
-	  // Custom JS
-	  
-      // Boot the app
-      app.Boot();
-    });
-  </script>
+    <div id="ContextContainer">
+      <a id="ContextButton">&#8801;</a><br />
+      <div id="ContextMenu" style="display: none;">
+        <input id="ID_SavegamesImport" type="file" onchange="onSavegamesImport(this)" accept="application/zip" style=display:none></input>
+        <a href="javascript:document.getElementById('ID_SavegamesImport').click();">Import saves</a><br />
+        <a href="javascript:onSavegamesExport();">Export saves</a><br />
+        <a href="javascript:FSDownload('/log.txt', 'text/plain');">Ren'Py log</a><br />
+        <a href="https://renpy.beuc.net/" target="_blank">
+          <span style="font-size: smaller">
+            <span style="color: dimgrey">Powered by</span>
+            RenPyWeb
+          </span>
+        </a>
+        </span>
+      </div>
+    </div>
 
+    <script type='text/javascript'>
+      /* Copyright (C) 2018, 2019  Sylvain Beucler */
 
+      /* Context menu */
+      document.getElementById('ContextButton').addEventListener('click', function (e) {
+        var menu = document.getElementById('ContextMenu');
+        if (menu.style.display == 'none')
+          menu.style.display = 'block';
+        else
+          menu.style.display = 'none';
+        e.preventDefault();
+      });
 
-</body>
+      function onSavegamesImport(input) {
+        reader = new FileReader();
+        reader.onload = function(e) {
+          FS.writeFile('savegames.zip', new Uint8Array(e.target.result));
+          Module._emSavegamesImport();
+          FS.syncfs(false, function(err) {
+            if (err) {
+              console.trace(); console.log(err, err.message);
+              Module.print("Warning: cannot import savegames: write error: " + err.message + "\n");
+            } else {
+              Module.print("Saves imported - restart game to apply.\n");
+            }
+          });
+        }
+        reader.readAsArrayBuffer(input.files[0])
+	input.type = ''; input.type = 'file'; // reset field
+      }
 
+      function onSavegamesExport() {
+        ret = Module._emSavegamesExport();
+        if (ret) {
+          FSDownload('savegames.zip', 'application/zip');
+        }
+      }
+
+      function gameExtractAndRun() {
+        start = Date.now();
+        var ret = Module.ccall('PyRun_SimpleString', 'number', ['string'], [
+          "import zipfile\n" +
+          "zip_ref = zipfile.ZipFile('game.zip', 'r')\n" +
+          "zip_ref.extractall('.')\n" +
+          "zip_ref.close()\n"
+        ])
+        if (ret != 0) {
+            Module.setStatus("Error extracting .zip.");
+            return;
+        }
+        FS.unlink('/game.zip')
+        Module.print("Extracted in " + (Date.now()-start)/1000.0 + "s\n");
+
+        if (FS.readdir('/').indexOf('game') < 0) {
+            Module.setStatus("Invalid .zip (no top-level 'game' directory).");
+            return;
+        }
+
+        // presplash
+        presplash = undefined;
+        if (FS.readdir('/').indexOf('web-presplash.png') >= 0) {
+          presplash = FS.readFile('/web-presplash.png');
+        } else if (FS.readdir('/').indexOf('web-presplash.jpg') >= 0) {
+          presplash = FS.readFile('/web-presplash.jpg');
+        } else if (FS.readdir('/').indexOf('web-presplash.webp') >= 0) {
+          presplash = FS.readFile('/web-presplash.webp');
+        } else if (FS.readdir('/').indexOf('web-presplash-default.jpg') >= 0) {
+          presplash = FS.readFile('/web-presplash-default.jpg');
+        }
+
+        div = document.createElement('div');
+        div.id = 'presplash';  // used by presplashEnd()
+        div.style = 'position: absolute; width: 100%; height: 100%';
+        c = document.getElementById('canvas');
+        c.parentElement.prepend(div);
+
+        if (presplash) {
+          obj_url = window.URL.createObjectURL(new Blob([presplash]));
+          img = document.createElement('img');
+          img.src = obj_url;
+          img.style = 'display: block; margin: auto; width: 100%; height: 100%; object-fit: contain';
+          div.appendChild(img)
+        } else {
+          Module.print("Loading game, please wait...\n");
+        }
+
+        // give control back to webui before running main
+        window.setTimeout(function() {
+          Module.ccall('pyapp_runmain', '', [], [], {async: true})
+        }, 200);  // smaller delay doesn't update the DOM, esp. on mobile
+      }
+
+      // hook for Ren'Py
+      function presplashEnd() {
+        document.getElementById('presplash').remove();
+      }
+      function FSDownload(filename, mimetype) {
+        console.log('download', filename);
+        var a = document.createElement('a');
+        a.download = filename.replace(/.*\//, '');
+        try {
+          a.href = window.URL.createObjectURL(new Blob([FS.readFile(filename)],
+                                                       { type: mimetype || '' }));
+        } catch(e) {
+          Module.print("Error opening " + filename + "\n");
+          return;
+        }
+        document.body.appendChild(a);
+        a.click();
+        // delay clean-up to avoid iOS issue:
+        // The operation couldn’t be completed. (WebKitBlobResourse error 1.)
+        setTimeout(function() {
+            window.URL.revokeObjectURL(a.href);
+            document.body.removeChild(a);
+        }, 1000);
+      }
+    </script>
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+      var spinnerElement = document.getElementById('spinner');
+
+      var Module = {
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('status');
+          return function(text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            // These replacements are necessary if you render to raw HTML
+            text = String(text);
+            text = text.replace(/&/g, "&amp;");
+            text = text.replace(/</g, "&lt;");
+            text = text.replace(/>/g, "&gt;");
+            text = text.replace('\n', '<br />', 'g');
+            element.innerHTML += text;
+
+            statusbar = document.getElementById('statusbar');
+            statusbar.hidden = false;
+            var print_date = new Date();
+            statusbar.date = print_date;
+            window.setTimeout(function() {
+              // Hide status bar after a few seconds - only if setStatus isn't active
+              if (Module.setStatus.last && Module.setStatus.last.text == ''
+                  && statusbar.date == print_date) {
+                element.innerHTML = ''; statusbar.hidden = true;
+              }
+            }, 3000);
+          };
+        })(),
+        printErr: function(text) {
+          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.last.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+          Module.setStatus.last.time = now;
+          Module.setStatus.last.text = text;
+          if (m) {
+            text = m[1];
+            progressElement.value = parseInt(m[2])*100;
+            progressElement.max = parseInt(m[4])*100;
+            progressElement.hidden = false;
+            spinnerElement.hidden = false;
+          } else {
+            progressElement.value = null;
+            progressElement.max = null;
+            progressElement.hidden = true;
+            if (!text) spinnerElement.style.display = 'none';
+          }
+          if (text == '') {
+            statusElement.innerHTML = '';
+            document.getElementById('statusbar').hidden = true;
+          } else {
+            statusElement.innerHTML = text + '<br />';
+            document.getElementById('statusbar').hidden = false;
+          }
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+        }
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        //Module.setStatus('Exception thrown, see JavaScript console');
+        // Explicitly display meaningful errors such as "uncaught exception: out of memory":
+        Module.setStatus('Error: ' + event.split('\n')[0] + ' (see JavaScript console for details)');
+        spinnerElement.style.display = 'none';
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+    </script>
+    <script type='text/javascript' src="pythonhome-data.js"></script>
+    <script type='text/javascript' src="pyapp-data.js"></script>
+    <script type='text/javascript'>
+      function create_persistent() {
+        // populate savegames
+        try {
+          FS.mkdir('/home/web_user/.renpy');
+          FS.mount(IDBFS, {}, '/home/web_user/.renpy');
+        } catch(e) {
+          console.log(e);
+          Module.print("Could not create ~/.renpy/ : " + e.message + "\n");
+        }
+        FS.syncfs(true, function(err) {
+          if (err) {
+              console.trace(); console.log(err, err.message);
+              // Note: not visible enough, quickly replaced by loading status
+              Module.print("Warning: cannot save games\n");
+          }
+        });
+      }
+      if (Module['calledRun']) {
+        create_persistent();
+      } else {
+        if (!Module['preRun']) Module['preRun'] = [];
+        Module["preRun"].push(create_persistent); // FS is not initialized yet, wait for it
+      }
+    </script>
+    <script type="text/javascript" src="zee.js"></script>
+    <script async type="text/javascript" src="index.js"></script>
+  </body>
 </html>
+
 
