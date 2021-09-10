@@ -22,7 +22,8 @@ img{
 }
 .texto{
     text-align: center;
-    color: purple;
+    color: #e30b6a;
+    font-family: 'Oswald', sans-serif;
 }
 #separador{
     width: 100%;
@@ -34,10 +35,10 @@ img{
 
 :root {
   --bg: #000000;     
-  --social-icon1: purple;
-  --social-icon2: purple;
-  --social-icon3: purple;
-  --social-icon4: purple;
+  --social-icon1: #e30b6a;
+  --social-icon2: #e30b6a;
+  --social-icon3: #e30b6a;
+  --social-icon4: #e30b6a;
 }
 
 section {
