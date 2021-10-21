@@ -2,39 +2,89 @@
 <html>
     <head>
         <title>Kisu Enlaces</title>
-        <link rel="icon" type="image/png" href="imagenes/favicon.png">
-        <link rel="stylesheet" href="principal.css">
+        <link rel="icon" type="image/png" href="img/favicon.png">
+        <link rel="stylesheet" href="css/principal.css">
+        <link rel="stylesheet" href="css/gallery.css">
+        <link rel="stylesheet" href="css/icons.css">
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
-          </style>
+        </style>
     </head>
     <body>
         <div class="bgImagen">
-            <div class="contenido">
-                <img id="icon" src="imagenes/favicon.png" alt="Icono Kisuna" width="200" height="200">
+          <div class="contenido">
+                <img id="icon" src="img/favicon.png" alt="Icono Kisuna" width="200" height="200">
                 <h1 class="texto">KISUNA</h1>
                 <h2 class="texto">Ilustracion | Cómic | Character Desing</h2>
                 <hr id="separador">
                 
-                <section>
-                  <ul class="icon-list">
-                    <li class="icon-item">
-                      <a href="mailto:kisunasketchbook@gmail.com" target="_blank"class="icon-link"><img src="imagenes/email.svg" alt="Correo electroinico" width="60" height="60"></a>
-                    </li>
-                    <li class="icon-item">
-                      <a href="https://twitter.com/KisuSketchBook" class="icon-link" target="_blank"><img src="imagenes/twitter.svg" alt="twitter" width="60" height="60"></a>
-                    </li>
-                    <li class="icon-item">
-                      <a href="https://www.instagram.com/kisunasketchbook/" class="icon-link" target="_blank"><img src="imagenes/instagram.svg" alt="instagram" width="60" height="60"></i></a>
-                    </li>
-                    <li class="icon-item">
-                      <a href="https://discord.gg/DcJ2TadArT" class="icon-link" target="_blank"><img src="imagenes/discord.svg" alt="instagram" width="60" height="60"></i></a>
-                    </li>
-                  </ul>
-                </section>
+            <section>
+                <ul class="icon-list">
+                  <li class="icon-item">
+                    <a href="mailto:kisunasketchbook@gmail.com" target="_blank"class="icon-link"><img src="img/email.svg" alt="Correo electroinico" width="60" height="60"></a>
+                  </li>
+                  <li class="icon-item">
+                    <a href="https://twitter.com/KisuSketchBook" class="icon-link" target="_blank"><img src="img/twitter.svg" alt="twitter" width="60" height="60"></a>
+                  </li>
+                  <li class="icon-item">
+                    <a href="https://www.instagram.com/kisunasketchbook/" class="icon-link" target="_blank"><img src="img/instagram.svg" alt="instagram" width="60" height="60"></i></a>
+                  </li>
+                  <li class="icon-item">
+                    <a href="https://discord.gg/DcJ2TadArT" class="icon-link" target="_blank"><img src="img/discord.svg" alt="instagram" width="60" height="60"></i></a>
+                  </li>
+                </ul>
+            </section>
+          </div>
 
-                
+          <div class="root">
+            <div class="gallery">
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-1.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-2.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-3.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-4.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-5.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-6.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-7.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-8.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-9.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-10.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-11.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery__item icon-expand">
+                    <img src="img/img-12.jpg" alt="Imagen de galería" class="gallery__img">
+                </div>
+                <div class="gallery-lightbox">
+                    <div class="gallery-lightbox__modal">
+                        <span class="gallery-lightbox__control icon-close"></span>
+                        <span class="gallery-lightbox__control icon-back"></span>
+                        <span class="gallery-lightbox__control icon-next"></span>
+                        <img src="img/img-1.jpg" class="gallery-lightbox__img">
+                    </div>
+                </div>
             </div>
+        </div>
+        <script src="js/script.js"></script>
         </div>
     </body>
 </html>
