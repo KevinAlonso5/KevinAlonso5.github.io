@@ -54,7 +54,6 @@ section {
 }
 
 .icon-list {
-  width: 100%;
   max-width: 50rem;
   padding: 0 1.5rem;
   display: flex;
@@ -139,7 +138,7 @@ section {
   height:360px;
   background-size: 100% 100%;
   background-repeat:no-repeat;
-  background:url(/imagenes/1background.jpg);
+  background:url(/imagenes/background.jpg);
   background-size: cover;
   }
 
@@ -168,8 +167,26 @@ section {
     margin-top: 1rem;
   }
 
-  a:link, a:visited, a:active{
-    text-decoration:none;
+  .adiv{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+
+  a{
+    font-weight: bold;
+    font-family: 'Lato', sans-serif;
+    font-size: 1.30em;
+    text-align: center;
+  }
+
+  a:link,  a:visited{
+    color: #a70000;
+  }
+
+  a:hover{
+    color: #f70303;
   }
 
   .min{
@@ -180,4 +197,5 @@ section {
 
   .conten{
     margin-left: 20%;
+    margin-top: 12px;
   }
