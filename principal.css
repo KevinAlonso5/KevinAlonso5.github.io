@@ -199,3 +199,10 @@ section {
     margin-left: 20%;
     margin-top: 12px;
   }
+
+  .nombre {
+    margin-bottom: 1px;
+  }
+  .apellidos{
+    margin-top: 1px;
+  }
