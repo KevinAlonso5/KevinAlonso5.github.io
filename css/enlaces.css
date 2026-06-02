@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
+
 body{
     background-color: #585858;
 }
@@ -36,7 +38,9 @@ a {
 h1 {
     color:white;
     text-align:center;
-    font-family: sans-serif;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600; /* Semi-negrita para destacar */
+    letter-spacing: -0.5px; 
 }
 
 h1{
